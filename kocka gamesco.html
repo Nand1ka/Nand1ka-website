@@ -52,10 +52,10 @@
       const maxX = gameArea.clientWidth - cube.clientWidth;
       const maxY = gameArea.clientHeight - cube.clientHeight;
 
-      if (e.key === 'ArrowRight') x = Math.min(x + step, maxX);
-      if (e.key === 'ArrowLeft')  x = Math.max(x - step, 0);
-      if (e.key === 'ArrowDown')  y = Math.min(y + step, maxY);
-      if (e.key === 'ArrowUp')    y = Math.max(y - step, 0);
+      if (e.key === 'd') x = Math.min(x + step, maxX);
+      if (e.key === 'a')  x = Math.max(x - step, 0);
+      if (e.key === 's')  y = Math.min(y + step, maxY);
+      if (e.key === 'w')    y = Math.max(y - step, 0);
 
       cube.style.left = x + 'px';
       cube.style.top = y + 'px';
