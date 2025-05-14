@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>CPS Teszt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+            background-color: #f0f0f0;
+        }
+        #startBtn {
+            font-size: 48px; /* kétszer nagyobb, mint a szokásos 24px */
+            padding: 30px 60px;
+            cursor: pointer;
+        }
+        #startBtn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 24px;
+            color: darkred;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>CPS Teszt</h1>
+    <p>Kattints az „Indítás” gombra minél többször 10 másodperc alatt!</p>
+
+    <button onclick="handleClick()" id="startBtn">Indítás</button>
+
+    <div id="result"></div>
+
+    <script>
+        let clicks = 0;
+        let timerStarted = false;
+        const duration = 10 * 1000; // 10 mp
+        const cooldown = 5 * 1000; // 5 mp letiltás
+        const resultDiv = document.getElementById("result");
+        const startBtn = document.getElementById("startBtn");
+
+        function handleClick() {
+            if (!timerStarted) {
+                timerStarted = true;
+                clicks = 1;
+                resultDiv.textContent = "Teszt folyamatban...";
+
+                const timer = setTimeout(() => {
+                    const cps = (clicks / 10).toFixed(2);
+                    resultDiv.textContent = `Végeredmény: ${clicks} kattintás (${cps} CPS)`;
+
+                    startBtn.disabled = true;
+
+                    setTimeout(() => {
+                        resultDiv.textContent += " — Újra próbálhatod!";
+                        startBtn.disabled = false;
+                        timerStarted = false;
+                        clicks = 0;
+                    }, cooldown);
+                }, duration);
+            } else {
+                clicks++;
+            }
+        }
+    </script>
+
+</body>
+</html>
