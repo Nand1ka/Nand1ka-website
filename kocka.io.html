@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kocka.io</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+    }
+    #score, #killCount, #gameOver {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      z-index: 10;
+    }
+    canvas {
+      display: block;
+    }
+    .menu {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 20px;
+      text-align: center;
+    }
+    .menu button {
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #444;
+      border: 1px solid #888;
+      color: white;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu" id="mainMenu">
+    <h2>Főmenü</h2>
+    <button id="startGameBtn">Játék indítása</button>
+    <button id="loadScoresBtn">Pontszámok és Rekordok</button>
+    <div id="scoreDisplay" style="margin-top: 20px;">
+      <div>Legjobb Pontszám: <span id="highScore">0</span></div>
+      <div>Legjobb Kill: <span id="highKills">0</span></div>
+    </div>
+    <h3>Válassz színt!</h3>
+    <button class="colorBtn" data-color="blue" style="background-color: blue;">Kék</button>
+    <button class="colorBtn" data-color="green" style="background-color: green;">Zöld</button>
+    <button class="colorBtn" data-color="red" style="background-color: red;">Piros</button>
+    <button class="colorBtn" data-color="yellow" style="background-color: yellow;">Sárga</button>
+    <button class="colorBtn" data-color="white" style="background-color: white;">Fehér</button>
+    <button class="colorBtn" data-color="pink" style="background-color: pink;">Rózsaszín</button>
+    <button class="colorBtn" data-color="gray" style="background-color: gray;">Szürke</button>
+  </div>
+  <div id="gameOver" style="display:none;">
+    <button id="restartBtn">Újraéledés</button>
+  </div>
+  <canvas id="gameCanvas"></canvas>
+  <audio id="gameMusic" loop autoplay>
+    <source src="techno.mp3" type="audio/mp3" />
+  </audio>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const gameMusic = document.getElementById("gameMusic");
+    let player, food, enemies, gameLoopInterval, keys, gameStarted = false;
+    let highScore = 0;
+    let highKills = 0;
+    let killCount = 0;
+    const WORLD_SIZE = 15000;
+    const FOOD_COUNT = 500;
+    const ENEMY_COUNT = 10;
+    const COLORS = ['blue', 'green', 'red', 'yellow', 'white', 'pink', 'gray'];
+
+    // Főmenü
+    document.getElementById('startGameBtn').addEventListener('click', () => startGame());
+    document.getElementById('loadScoresBtn').addEventListener('click', () => showScores());
+
+    // Színek és rekordok mentése
+    let playerColor = 'lime';
+    let recordScore = localStorage.getItem('highScore') || 0;
+    let recordKills = localStorage.getItem('highKills') || 0;
+
+    document.getElementById('highScore').textContent = recordScore;
+    document.getElementById('highKills').textContent = recordKills;
+
+    // Színválasztás
+    document.querySelectorAll('.colorBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        playerColor = btn.getAttribute('data-color');
+        document.getElementById('mainMenu').style.display = 'none';
+        startGame();
+      });
+    });
+
+    // Játék újraindítása
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      document.getElementById('gameOver').style.display = 'none';
+      startGame();
+    });
+
+    // Rekordok megjelenítése
+    function showScores() {
+      alert(`Legjobb Pontszám: ${recordScore}\nLegjobb Kill: ${recordKills}`);
+    }
+
+    // Alap beállítások
+    function resetGame() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      keys = {};
+      food = [];
+      enemies = [];
+      killCount = 0;
+      player = {
+        x: WORLD_SIZE / 2,
+        y: WORLD_SIZE / 2,
+        size: 20,
+        speed: 3,
+        color: playerColor,
+        alive: true,
+        score: 0
+      };
+      spawnFood();
+      spawnEnemies();
+      document.getElementById('gameOver').style.display = 'none';
+      document.getElementById('score').textContent = `Pontszám: ${player.score}`;
+    }
+
+    // Játék elindítása
+    function startGame() {
+      document.getElementById("mainMenu").style.display = "none";
+      resetGame();
+      gameStarted = true;
+      gameLoop();
+    }
+
+    // Játék frissítés
+    function gameLoop() {
+      if (!player.alive) {
+        endGame();
+        return;
+      }
+      updatePlayer();
+      updateEnemies();
+      eatCheck();
+      draw();
+      gameLoopInterval = requestAnimationFrame(gameLoop);
+    }
+
+    function endGame() {
+      cancelAnimationFrame(gameLoopInterval);
+      document.getElementById("gameOver").style.display = "block";
+      // Frissítjük rekordokat
+      if (player.score > highScore) {
+        highScore = player.score;
+        localStorage.setItem('highScore', highScore);
+      }
+      if (killCount > highKills) {
+        highKills = killCount;
+        localStorage.setItem('highKills', highKills);
+      }
+      document.getElementById('highScore').textContent = highScore;
+      document.getElementById('highKills').textContent = highKills;
+    }
+
+    // Player mozgás
+    document.addEventListener("keydown", (e) => (keys[e.key.toLowerCase()] = true));
+    document.addEventListener("keyup", (e) => (keys[e.key.toLowerCase()] = false));
+
+    function updatePlayer() {
+      if (keys["w"]) player.y -= player.speed;
+      if (keys["s"]) player.y += player.speed;
+      if (keys["a"]) player.x -= player.speed;
+      if (keys["d"]) player.x += player.speed;
+
+      if (player.x < 0 || player.y < 0 || player.x + player.size > WORLD_SIZE || player.y + player.size > WORLD_SIZE) {
+        player.alive = false;
+      }
+    }
+
+    // Ellenségek frissítése, célzott támadás
+    function updateEnemies() {
+      enemies.forEach((e, i) => {
+        if (!e.alive) return;
+
+        const nearestPlayer = findNearestPlayer(e);
+        const angle = Math.atan2(nearestPlayer.y - e.y, nearestPlayer.x - e.x);
+        e.x += Math.cos(angle) * e.speed;
+        e.y += Math.sin(angle) * e.speed;
+
+        // Ellenség ütközése a játékossal
+        if (
+          player.x < e.x + e.size &&
+          player.x + player.size > e.x &&
+          player.y < e.y + e.size &&
+          player.y + player.size > e.y
+        ) {
+          if (player.size > e.size) {
+            player.size += Math.floor(e.size / 2);
+            killCount++;
+            enemies[i].alive = false;
+            spawnEnemy();
+          } else {
+            player.alive = false;
+            alert("Megevett egy nagyobb ellenség! Vége a játéknak.");
+          }
+        }
+      });
+    }
+
+    // Legközelebbi játékos/bot megtalálása
+    function findNearestPlayer(enemy) {
+      let closest = player;
+      let minDist = Infinity;
+      enemies.forEach((e) => {
+        if (e.alive) {
+          const dist = Math.hypot(enemy.x - e.x, enemy.y - e.y);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = e;
+          }
+        }
+      });
+      return closest;
+    }
+
+    // Kaja spawnálás
+    function spawnFood() {
+      for (let i = 0; i < FOOD_COUNT; i++) {
+        food.push({
+          x: Math.random() * WORLD_SIZE,
+          y: Math.random() * WORLD_SIZE,
+          size: 5
+        });
+      }
+    }
+
+    // Ellenségek spawnálása
+    function spawnEnemies() {
+      for (let i = 0; i < ENEMY_COUNT; i++) {
+        enemies.push({
+          x: Math.random() * WORLD_SIZE,
+          y: Math.random() * WORLD_SIZE,
+          size: 20,
+          speed: 1,
+          alive: true
+        });
+      }
+    }
+
+    // Kaja megevése
+    function eatCheck() {
+      food.forEach((f, i) => {
+        if (
+          player.x < f.x + f.size &&
+          player.x + player.size > f.x &&
+          player.y < f.y + f.size &&
+          player.y + player.size > f.y
+        ) {
+          player.size += 1;
+          player.score += 10;
+          food.splice(i, 1);
+        }
+      });
+    }
+
+    // Játék megjelenítése
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.size, player.size);
+
+      // Kaja kirajzolása
+      food.forEach(f => {
+        ctx.fillStyle = "white";
+        ctx.fillRect(f.x, f.y, f.size, f.size);
+      });
+
+      // Ellenségek kirajzolása
+      enemies.forEach(e => {
+        ctx.fillStyle = "red";
+        ctx.fillRect(e.x, e.y, e.size, e.size);
+      });
+
+      // Pontszám és kill kiírása
+      ctx.fillStyle = "white";
+      ctx.fillText(`Pontszám: ${player.score}`, 10, 30);
+      ctx.fillText(`Kills: ${killCount}`, 10, 60);
+    }
+  </script>
+</body>
+</html>
