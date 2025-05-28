@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Források</title>
+    <style>
+        a {
+            color: black;
+            font-size:100px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://debrecen.gorogkatolikus.hu/">Hivatalos weboldal                             
+</a>
+    <a href="https://www.magyarkurir.hu/hirek/felujitjak-debreceni-gorogkatolikus-foszekesegyhazat">Hírek a felújításról                              
+</a>
+    <a href="https://hu.m.wikipedia.org/wiki/F%C3%A1jl:Attila_t%C3%A9ri_g%C3%B6r%C3%B6g_katolikus_templom_(Debrecen).jpg">kép                         
+</a>
+    <a href="https://miserend.hu/templom/3751">Időpontok                                         
+</a>
+    <a href="https://www.google.com/search?sca_esv=3f2684b5ae9554a2&rlz=1C1GCEU_enHU1115HU1116&sxsrf=AE3TifP4xPd-X8mVm9Ml55fRyOjWeIrHbg:1748466929085&q=Istensz%C3%BCl%C5%91+Oltalma+G%C3%B6r%C3%B6gkatolikus+F%C5%91sz%C3%A9kesegyh%C3%A1z+debrecen&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZ1Y6MJ25_tmWITc7uy4KIemkjk18Cn72Gp24fGkjjh6zMCa7_MMjQ9iBkHsfpWm-fVReJAmj528KwMROnRz9i4IyNNe1_nIswOmfAYOWeXMXq0bQ6188hwI5LN8Ne_WxxFh_1GptGfUVySZQCxm3WmS0frf8&sa=X&ved=2ahUKEwiovNbxiseNAxXZJxAIHUcwDa0QtKgLegQIGxAB&biw=1536&bih=738&dpr=1.25">Képek                                      
+</a>    
+</body>
+</html>
