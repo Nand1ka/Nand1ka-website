@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        a {
+            color: red;
+            font-size: 20px;
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<a href="https://nand1ka.github.io/Nand1ka-website/szavak 6c.html">Angol szavak 6c</a>
+
+</head>
+</body>
