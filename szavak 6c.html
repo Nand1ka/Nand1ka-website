@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Angol szókártyák</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    #word { font-size: 2em; margin: 20px; }
+    button { padding: 10px 20px; margin: 10px; font-size: 1em; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Angol szókártyák</h1>
+  <div id="word">Nyomj a "Új szó" gombra!</div>
+  <button onclick="newWord()">Új szó</button>
+  <button onclick="showAnswer()">Megoldás</button>
+
+  <script>
+    const words = [
+      {hu:"hozzáad", en:"add"},
+      {hu:"süt (kenyeret, tortát)", en:"bake"},
+      {hu:"(vízben) főz", en:"boil"},
+      {hu:"alja, alsó része", en:"bottom"},
+      {hu:"tál", en:"bowl"},
+      {hu:"chili (erős apró piros paprika)", en:"chilli"},
+      {hu:"közepes lángon melegít", en:"cook over a medium heat"},
+      {hu:"(le)hűt, hűlik", en:"cool"},
+      {hu:"(le)fed", en:"cover"},
+      {hu:"tejszín", en:"cream"},
+      {hu:"edény", en:"dish"},
+      {hu:"villa", en:"fork"},
+      {hu:"(olajban) süt", en:"fry"},
+      {hu:"serpenyő", en:"frying pan"},
+      {hu:"gramm", en:"gram"},
+      {hu:"reszel", en:"grate"},
+      {hu:"melegít", en:"heat"},
+      {hu:"hozzávaló", en:"ingredient"},
+      {hu:"kés", en:"knife"},
+      {hu:"réteg", en:"layer"},
+      {hu:"alacsony", en:"low"},
+      {hu:"olvaszt, olvad", en:"melt"},
+      {hu:"keverék", en:"mixture"},
+      {hu:"milliliter", en:"millilitre"},
+      {hu:"sütő (tűzhely része)", en:"oven"},
+      {hu:"tepsi", en:"oven dish"},
+      {hu:"hámoz", en:"peel"},
+      {hu:"tányér", en:"plate"},
+      {hu:"önt", en:"pour"},
+      {hu:"mazsola", en:"raisin"},
+      {hu:"recept", en:"recipe"},
+      {hu:"eltávolít", en:"remove"},
+      {hu:"lábas", en:"saucepan"},
+      {hu:"mag", en:"seed"},
+      {hu:"héj", en:"skin"},
+      {hu:"(meg)kavar, keverget", en:"stir"},
+      {hu:"evőkanál", en:"tablespoon"},
+      {hu:"kiskanál, teáskanál", en:"teaspoon"},
+      {hu:"cső", en:"tube"},
+    ];
+
+    let currentWord = null;
+
+    function newWord() {
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      document.getElementById("word").textContent = currentWord.hu;
+    }
+
+    function showAnswer() {
+      if (currentWord) {
+        document.getElementById("word").textContent = currentWord.hu + " ➝ " + currentWord.en;
+      }
+    }
+  </script>
+</body>
+</html>
